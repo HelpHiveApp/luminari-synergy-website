@@ -6,13 +6,31 @@
 - Header and footer use the same silhouette. On dark surfaces, a CSS alpha mask colours it exactly warm ivory. The original full-colour version is used on light surfaces.
 - `src/app/icon.png` is a 64×64 browser icon derived from the same supplied artwork, fitted with transparent padding to preserve its proportions. It replaces the duplicated full-size logo.
 
-## Homepage plasma background
+## Supplied homepage seed background
+
+- `public/images/germinating-radish-seed-violet-reflection.png` is the supplied “Germinating Radish Seed in Violet Reflection.png”, renamed without re-encoding or altering the file contents.
+- Decorative, full-bleed homepage artwork, with empty alt text. Desktop and phone crops are controlled independently in `src/app/globals.css`.
+- The source PNG is used directly through Next.js Image for responsive delivery, with preloading enabled. All overlaid text and controls remain HTML.
+
+## Supplied technology illustration
+
+- `public/images/plasma-water-radish-germination-illustration.png` is the supplied “Germinating Radishes Under Violet Lab Glow.png”, renamed without changing the file contents.
+- Used with the existing homepage technology explanation. Its native 1672×941 aspect ratio preserves the vessel and germination dish; it is lazy-loaded below the fold.
+- This is a process illustration, not a photograph of LS equipment or evidence of trial outcomes. Descriptive alt text and the caption identify its illustrative role.
+
+## Supplied Verdaqua lead image
+
+- `public/images/radish-microgreens-violet-droplet.png` is the supplied “Dew-kissed radish microgreens in violet shadow.png”, renamed without changing the file contents.
+- Used as the lead image on `/verdaqua`. Its crop preserves the foreground leaves and hanging droplet. The caption identifies it as illustrative, not a Verdaqua trial.
+
+## Previous plasma background (retained)
 
 - `public/images/plasma-water-hero.webp` is a losslessly compressed delivery copy of the clean artwork generated using the built-in image_gen tool. Decoded visible pixels were verified unchanged. It contains no text, logos or controls, and is an illustration rather than scientific evidence or an authentic LS apparatus photograph.
+- Retained for provenance; it is no longer rendered by the site.
 - The full prompt and method are saved in `design/plasma-hero-prompt.txt`.
 - The supplied “Violet Plasma, From Lab to Field.png” was inspected as a composition reference only. It is not shipped as website content. HTML renders every logo, word, navigation link, action and brand destination.
 
-## Verdaqua photograph
+## Homepage Verdaqua section photograph
 
 - Local file: `public/images/grower-seedlings-trays.jpg`
 - Photographer: Alfo Medeiros

@@ -76,7 +76,7 @@ try {
       const hrefs = await page.locator('a[href^="/"],a[href^="#"]').evaluateAll(links => [...new Set(links.map(link => link.getAttribute("href")))]);
       for (const href of hrefs) await checkTarget(context, href, page.url());
 
-      for (const photo of await page.locator(".plasma-art,.feature-photo img,.hero-image").all()) {
+      for (const photo of await page.locator(".plasma-art,.feature-photo img,.technology-photo img,.hero-image").all()) {
         await photo.scrollIntoViewIfNeeded();
         await photo.evaluate(img => img.decode());
         assert.ok(await photo.evaluate(img => img.complete && img.naturalWidth > 0));
@@ -85,6 +85,11 @@ try {
 
       if (route === "/") {
         assert.equal(await page.locator("h1").innerText(), "Plasma technology,\nfrom lab to field.");
+        assert.ok((await page.locator(".plasma-art").getAttribute("src")).includes("germinating-radish-seed-violet-reflection"));
+        assert.equal(await page.locator(".plasma-art").getAttribute("alt"), "");
+        assert.equal(await page.locator(".technology-photo img").getAttribute("loading"), "lazy");
+        const technologyPhoto = await page.locator(".technology-photo img").boundingBox();
+        assert.ok(Math.abs(technologyPhoto.width / technologyPhoto.height - 1672 / 941) < 0.01, "Technology image retains the complete vessel and dish");
         const hero = await page.locator(".plasma-hero").boundingBox();
         const art = await page.locator(".plasma-art").boundingBox();
         const header = await page.locator(".site-header").boundingBox();
@@ -111,6 +116,7 @@ try {
       }
 
       if (route === "/verdaqua") {
+        assert.ok((await page.locator(".hero-image").getAttribute("src")).includes("radish-microgreens-violet-droplet"));
         assert.ok((await page.locator(".hero-eyebrow").innerText()).includes("Commercially available"));
         if (width < 601) {
           const copy = await page.locator(".hero-copy").boundingBox();

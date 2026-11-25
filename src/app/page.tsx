@@ -13,10 +13,10 @@ export default function Home() {
       <section className="plasma-hero" aria-labelledby="home-title">
         <Image
           className="plasma-art"
-          src="/images/plasma-water-hero.webp"
+          src="/images/germinating-radish-seed-violet-reflection.png"
           alt=""
           fill
-          sizes="100vw"
+          sizes="(max-width: 900px) max(100vw, 178svh), 100vw"
           preload
         />
         <div className="container plasma-copy">
@@ -64,7 +64,20 @@ export default function Home() {
           <p className="section-label">Our technology</p>
           <div className="technology-intro">
             <h2 id="technology-title">From plasma to seed preparation.</h2>
-            <p>A water treatment process, followed by a practical step before sowing.</p>
+            <div className="technology-overview">
+              <p>A water treatment process, followed by a practical step before sowing.</p>
+              <figure className="technology-photo">
+                <Image
+                  src="/images/plasma-water-radish-germination-illustration.png"
+                  alt="Illustration of a water vessel under a violet plasma discharge and a dish containing germinating radish seeds."
+                  width={1672}
+                  height={941}
+                  sizes="(max-width: 900px) 100vw, 38vw"
+                  loading="lazy"
+                />
+                <figcaption>Illustration of plasma treatment and seed germination.</figcaption>
+              </figure>
+            </div>
           </div>
           <ol className="process-list">
             <li>

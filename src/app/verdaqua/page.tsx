@@ -17,11 +17,11 @@ export default function Verdaqua() {
         description="Verdaqua is Luminari Synergy’s agricultural brand. We work with growers to study how soaking seeds before sowing affects germination and early growth."
         action={{ label: "Discuss Verdaqua for your crop", href: "/contact" }}
         image={{
-          src: "/images/grower-seedlings-trays.jpg",
-          alt: "A grower’s hands tending young leafy seedlings in black nursery trays.",
-          width: 1600,
-          height: 1065,
-          caption: "Illustrative nursery photography · Not a Verdaqua trial",
+          src: "/images/radish-microgreens-violet-droplet.png",
+          alt: "Radish microgreens with dew on the foreground leaves and a droplet hanging beneath a leaf in violet light.",
+          width: 1672,
+          height: 941,
+          caption: "Illustrative radish microgreens · Not a Verdaqua trial",
         }}
       />
       <section className="work-section" aria-labelledby="seed-soaking-title">

@@ -34,7 +34,7 @@ The enquiry focus supports Verdaqua grower trials, ReGreen research partnerships
 ## Content and assets before launch
 
 - Supply the verified company inbox described above.
-- The plasma hero is newly generated, text-free illustrative artwork. Its prompt and generation method are saved in `design/plasma-hero-prompt.txt`. The seedling and quarry photographs are licensed illustrative stock and visibly identified as such. Replace them with approved LS photography when available. No authentic apparatus photograph was supplied; the technology section uses a readable three-step explanation.
+- Home uses the supplied germinating-seed background and a supplied process illustration beside the technology explanation. Verdaqua uses the supplied microgreens lead image. The PNGs are unchanged apart from descriptive filenames; Next.js handles responsive delivery. The process illustration is not presented as actual LS equipment or trial evidence. Asset provenance and previous artwork are documented in `ASSETS.md`.
 - No trial data was supplied, so Research describes work in progress. Supply verified results and trial conditions before adding any outcome claims; they are not required to preview this version.
 
 ## Checks
