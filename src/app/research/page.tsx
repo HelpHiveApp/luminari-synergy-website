@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function Research() {
   return (
-    <article className="editorial-page">
+    <article className="editorial-page research-page">
       <PageIntro label="Research" title="What changes when seeds are soaked?">
         <p>How does seed soaking affect germination and early growth? That is the question behind our agricultural trials with Verdaqua.</p>
       </PageIntro>

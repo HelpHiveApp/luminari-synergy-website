@@ -6,104 +6,181 @@ const baseURL = process.env.PREVIEW_URL || "http://127.0.0.1:3000";
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const errors = [];
 const results = [];
-const routes = ["/", "/verdaqua", "/research", "/about", "/contact"];
-const navLinks = { Verdaqua: "/verdaqua", Research: "/research", About: "/about", Contact: "/contact" };
+const routes = { "/": "Luminari Synergy", "/verdaqua": "Verdaqua", "/research": "Research", "/about": "Company", "/contact": "Contact" };
+const navigation = { Technology: "/#technology", "Our brands": "/#brands", Company: "/about", Contact: "/contact" };
+const viewports = [{ width: 1536, height: 960 }, { width: 1280, height: 640 }, { width: 768, height: 1024 }, { width: 390, height: 844 }, { width: 320, height: 640 }];
+const destinationCache = new Map();
 await mkdir("artifacts", { recursive: true });
 
+async function checkTarget(context, href, currentURL) {
+  const url = new URL(href, currentURL);
+  const hash = decodeURIComponent(url.hash.slice(1));
+  url.hash = "";
+  if (!destinationCache.has(url.href)) {
+    const response = await context.request.get(url.href);
+    assert.equal(response.status(), 200, `Destination ${href} exists`);
+    destinationCache.set(url.href, await response.text());
+  }
+  if (hash) assert.ok(destinationCache.get(url.href).includes(`id="${hash}"`), `Anchor ${href} exists`);
+}
+
+async function closeMenu(page) {
+  const button = page.getByRole("button", { name: "Close", exact: true });
+  if (await button.isVisible()) await button.click();
+}
+
 try {
-  for (const width of [1536, 768, 390, 320]) {
-    const context = await browser.newContext({ viewport: { width, height: width > 760 ? 1024 : 844 }, isMobile: width < 761, hasTouch: width < 761 });
+  for (const viewport of viewports) {
+    const { width, height } = viewport;
+    const mobileMenu = width <= 900;
+    const context = await browser.newContext({ viewport, isMobile: width < 601, hasTouch: width < 901 });
     const page = await context.newPage();
-    page.on("pageerror", (error) => errors.push(error.message));
-    page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
+    page.on("pageerror", error => errors.push(error.message));
+    page.on("console", message => { if (message.type() === "error") errors.push(message.text()); });
 
-    for (const route of routes) {
+    for (const [route, title] of Object.entries(routes)) {
       const response = await page.goto(`${baseURL}${route}`, { waitUntil: "networkidle" });
-      assert.equal(response.status(), 200, `${width}px ${route} responds successfully`);
+      assert.equal(response.status(), 200);
       await page.evaluate(() => document.fonts.ready);
-      assert.equal(await page.locator("h1").count(), 1, `${route} has one main heading`);
-      assert.ok((await page.title()).includes("Luminari Synergy"));
-      if (route !== "/") assert.ok((await page.title()).startsWith(route.slice(1)[0].toUpperCase() + route.slice(2)));
-      const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
-      assert.equal(overflow, false, `${width}px ${route} has no horizontal overflow`);
+      assert.ok((await page.title()).startsWith(title));
+      assert.equal(await page.locator("h1").count(), 1);
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth), false, `${width}px ${route}: no horizontal overflow`);
+      assert.ok((await page.locator("h1").evaluate(el => getComputedStyle(el).fontFamily)).includes("DM Sans"));
 
-      for (const [label, target] of Object.entries(navLinks)) {
-        const link = page.getByRole("navigation").getByRole("link", { name: label, exact: true });
-        assert.equal(await link.getAttribute("href"), target);
-        const box = await link.boundingBox();
-        assert.ok(box.height >= 44, `${label} has a 44px touch target`);
+      const logo = await page.locator(".site-header .logo-mark").boundingBox();
+      assert.ok(Math.abs(logo.width / logo.height - 1681 / 936) < 0.02, "Supplied logo proportions are preserved");
+      assert.equal(await page.locator(".site-header .logo-mark--reversed").count(), route === "/" ? 1 : 0);
+      assert.equal(await page.locator(".site-footer .logo-mark--reversed").count(), 1);
+
+      if (mobileMenu) {
+        const toggle = page.getByRole("button", { name: "Menu", exact: true });
+        await toggle.focus();
+        await page.keyboard.press("Enter");
+        assert.equal(await page.locator(".menu-toggle").getAttribute("aria-expanded"), "true");
+      }
+      const nav = page.getByRole("navigation", { name: "Main navigation", exact: true });
+      for (const [label, href] of Object.entries(navigation)) {
+        const link = nav.getByRole("link", { name: label, exact: true });
+        assert.ok(await link.isVisible());
+        assert.equal(await link.getAttribute("href"), href);
+        assert.ok((await link.boundingBox()).height >= 44);
+      }
+      if (mobileMenu) {
+        if (route === "/" && width === 390) await page.screenshot({ path: "artifacts/menu-390.png" });
+        await page.keyboard.press("Escape");
+        assert.equal(await page.getByRole("button", { name: "Menu", exact: true }).getAttribute("aria-expanded"), "false");
+        assert.equal(await page.locator(":focus").getAttribute("aria-controls"), "primary-navigation");
+        assert.equal(await nav.isVisible(), false);
       }
 
-      const destinations = await page.locator('a[href^="/"]').evaluateAll((links) => [...new Set(links.map((link) => link.getAttribute("href")))]);
-      for (const destination of destinations) {
-        const targetResponse = await context.request.get(`${baseURL}${destination.split("#")[0]}`);
-        assert.equal(targetResponse.status(), 200, `Link target ${destination} exists`);
-        if (destination.includes("#")) {
-          const targetMarkup = await targetResponse.text();
-          assert.ok(targetMarkup.includes(`id="${destination.split("#")[1]}"`), `Anchor ${destination} exists`);
-        }
+      const hrefs = await page.locator('a[href^="/"],a[href^="#"]').evaluateAll(links => [...new Set(links.map(link => link.getAttribute("href")))]);
+      for (const href of hrefs) await checkTarget(context, href, page.url());
+
+      for (const photo of await page.locator(".plasma-art,.feature-photo img,.hero-image").all()) {
+        await photo.scrollIntoViewIfNeeded();
+        await photo.evaluate(img => img.decode());
+        assert.ok(await photo.evaluate(img => img.complete && img.naturalWidth > 0));
       }
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
 
       if (route === "/") {
-        assert.equal(await page.locator("h1").innerText(), "Better starts\nfor growers.");
-        assert.ok(await page.locator(".hero-image").evaluate((img) => img.complete && img.naturalWidth > 0));
-        const copy = await page.locator(".hero-copy").boundingBox();
-        const image = await page.locator(".hero-image").boundingBox();
-        if (width < 761) assert.ok(copy.y + copy.height < image.y, "Mobile copy and CTA appear before the photo");
-        else {
-          assert.ok(copy.x < image.x && copy.y < image.y + image.height, "Desktop hero has two columns");
-          const heading = await page.locator("h1").evaluate((el) => ({ height: el.getBoundingClientRect().height, lineHeight: Number.parseFloat(getComputedStyle(el).lineHeight) }));
-          assert.ok(heading.height < heading.lineHeight * 2.1, "Desktop headline stays on the approved two lines");
+        assert.equal(await page.locator("h1").innerText(), "Plasma technology,\nfrom lab to field.");
+        const hero = await page.locator(".plasma-hero").boundingBox();
+        const art = await page.locator(".plasma-art").boundingBox();
+        const header = await page.locator(".site-header").boundingBox();
+        const action = await page.getByRole("link", { name: "How our technology works", exact: true }).boundingBox();
+        const brandLinks = await page.locator(".hero-brand-links .brand-link").all();
+        const first = await brandLinks[0].boundingBox();
+        const second = await brandLinks[1].boundingBox();
+        assert.equal(hero.y, 0, "Scene extends behind header");
+        assert.equal(art.y, 0);
+        assert.equal(art.width, width, "Scene is full width");
+        assert.ok(Math.abs(art.height - hero.height) < 2);
+        assert.ok(header.y + header.height < action.y);
+        assert.ok(first.y > action.y + action.height, "Brand links do not overlap the primary action");
+        assert.ok(second.y + second.height <= hero.y + hero.height, "Both brand links remain in the scene on short screens");
+        if (width > 900) {
+          const heading = await page.locator("h1").evaluate(el => ({ height: el.getBoundingClientRect().height, lineHeight: parseFloat(getComputedStyle(el).lineHeight) }));
+          assert.ok(heading.height <= heading.lineHeight * 2.1, "Desktop headline has two lines");
+        }
+        if (width <= 600) assert.ok(second.y >= first.y + first.height, "Brand links stack on phones");
+        assert.deepEqual(await page.locator(".process-list h3").allTextContents(), ["Plasma treatment", "Water activation", "Seed soaking"]);
+        assert.equal(await page.locator(".hero-brand-links").getByRole("link").count(), 2);
+        await page.screenshot({ path: `artifacts/home-${width}x${height}.png`, fullPage: true });
+        await page.screenshot({ path: `artifacts/hero-${width}x${height}.png` });
+      }
+
+      if (route === "/verdaqua") {
+        assert.ok((await page.locator(".hero-eyebrow").innerText()).includes("Commercially available"));
+        if (width < 601) {
+          const copy = await page.locator(".hero-copy").boundingBox();
+          const photo = await page.locator(".hero-image").boundingBox();
+          assert.ok(copy.y + copy.height < photo.y);
         }
       }
-
-      if (route === "/contact" && !process.env.EXPECT_CONTACT_EMAIL) {
-        assert.ok(await page.getByRole("button", { name: "Enquiries opening soon" }).isDisabled());
-        assert.equal(await page.locator('a[href^="mailto:"]').count(), 0);
-        assert.ok(await page.getByText("This form is a preview and cannot send messages yet.", { exact: false }).isVisible());
+      if (route === "/contact") {
+        assert.equal(await page.getByLabel("I’d like to discuss").inputValue(), "verdaqua");
+        assert.ok(await page.getByLabel("What do you grow?", { exact: true }).evaluate(el => el.required));
+        await page.getByLabel("I’d like to discuss").selectOption("regreen");
+        assert.equal(await page.getByLabel("Site or location (optional)").evaluate(el => el.required), false);
+        if (!process.env.EXPECT_CONTACT_EMAIL) {
+          assert.ok(await page.getByRole("button", { name: "Enquiries opening soon" }).isDisabled());
+          assert.equal(await page.locator('a[href^="mailto:"]').count(), 0);
+        }
       }
-
-      if (width === 1536 || width === 390) {
-        await page.screenshot({ path: `artifacts/${route === "/" ? "home" : route.slice(1)}-${width}.png`, fullPage: true });
-      }
-      results.push(`${width}px ${route}: page, title, headings, links and overflow passed`);
+      if (width === 1536 || width === 390) await page.screenshot({ path: `artifacts/${route === "/" ? "home" : route.slice(1)}-${width}.png`, fullPage: true });
+      results.push(`${width}x${height} ${route}: responsive layout, navigation, destinations, imagery, theme and logo passed`);
     }
 
     await page.goto(baseURL);
     await page.keyboard.press("Tab");
     assert.equal(await page.locator(":focus").innerText(), "Skip to content");
-    assert.notEqual(await page.locator(":focus").evaluate((el) => getComputedStyle(el).outlineStyle), "none");
     await page.keyboard.press("Enter");
     assert.equal(await page.locator(":focus").getAttribute("id"), "main");
-
-    for (const [label, target] of Object.entries(navLinks)) {
-      await page.getByRole("navigation").getByRole("link", { name: label, exact: true }).click();
-      await page.waitForURL(`${baseURL}${target}`);
-      assert.equal(await page.getByRole("navigation").getByRole("link", { name: label, exact: true }).getAttribute("aria-current"), "page");
-    }
-    await page.getByRole("link", { name: "Luminari Synergy home" }).click();
-    await page.waitForURL(`${baseURL}/`);
-    await page.getByRole("link", { name: "Explore Verdaqua", exact: true }).click();
-    await page.waitForURL(`${baseURL}/verdaqua`);
-    await page.getByRole("link", { name: "Explore the crop trials" }).click();
-    await page.waitForURL(`${baseURL}/research#crop-trials`);
+    await page.getByRole("link", { name: "How our technology works", exact: true }).focus();
+    assert.notEqual(await page.locator(":focus").evaluate(el => getComputedStyle(el).outlineStyle), "none");
+    await page.keyboard.press("Enter");
+    await page.waitForURL(`${baseURL}/#technology`);
+    await page.waitForFunction(() => document.getElementById("technology-title").getBoundingClientRect().top < innerHeight);
+    await page.getByRole("link", { name: "Explore our crop research", exact: true }).click();
+    await page.waitForURL(`${baseURL}/research`);
     await page.getByRole("link", { name: "Discuss your crop", exact: true }).click();
     await page.waitForURL(`${baseURL}/contact`);
-    await page.goto(`${baseURL}/verdaqua`);
-    await page.getByRole("link", { name: "Discuss Verdaqua for your crop" }).click();
+
+    if (mobileMenu) await page.getByRole("button", { name: "Menu", exact: true }).click();
+    await page.getByRole("navigation", { name: "Main navigation", exact: true }).getByRole("link", { name: "Our brands", exact: true }).click();
+    await page.waitForURL(`${baseURL}/#brands`);
+    if (mobileMenu) assert.equal(await page.getByRole("button", { name: "Menu", exact: true }).getAttribute("aria-expanded"), "false");
+    await page.locator(".hero-brand-links").getByRole("link", { name: /Verdaqua/ }).click();
+    await page.waitForURL(`${baseURL}/verdaqua`);
+    await page.getByRole("link", { name: "Discuss Verdaqua for your crop", exact: true }).click();
     await page.waitForURL(`${baseURL}/contact`);
-    results.push(`${width}px: navigation clicks, active states, CTA journey and keyboard skip link passed`);
+    await page.goto(baseURL);
+    await page.getByRole("link", { name: "Discuss a grower trial", exact: true }).click();
+    await page.waitForURL(`${baseURL}/contact?interest=verdaqua`);
+    assert.equal(await page.getByLabel("I’d like to discuss").inputValue(), "verdaqua");
+    await page.goto(baseURL);
+    await page.locator(".hero-brand-links").getByRole("link", { name: /ReGreen/ }).click();
+    await page.waitForURL(`${baseURL}/#regreen`);
+    await page.getByRole("link", { name: "Discuss a research partnership", exact: true }).click();
+    await page.waitForURL(`${baseURL}/contact?interest=regreen`);
+    assert.equal(await page.getByLabel("I’d like to discuss").inputValue(), "regreen");
+    await closeMenu(page);
+    results.push(`${width}x${height}: keyboard, menu dismissal, technology/research journey and both brand enquiry paths passed`);
     await context.close();
   }
 
-  const page = await browser.newPage();
-  const missing = await page.goto(`${baseURL}/does-not-exist`);
-  assert.equal(missing.status(), 404);
-  assert.ok(await page.getByRole("link", { name: "Back to home" }).isVisible());
+  const reduced = await browser.newContext({ reducedMotion: "reduce", viewport: { width: 390, height: 844 } });
+  const page = await reduced.newPage();
+  await page.goto(baseURL);
+  assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior), "auto");
+  await reduced.close();
+  const missing = await browser.newPage();
+  const response = await missing.goto(`${baseURL}/does-not-exist`);
+  assert.equal(response.status(), 404);
+  assert.ok(await missing.getByRole("link", { name: "Back to home" }).isVisible());
   assert.deepEqual(errors, [], "No browser console errors or uncaught errors");
-  await writeFile("artifacts/browser-checks.txt", results.join("\n") + "\n404 handling passed. No browser errors.\n");
+  results.push("Reduced motion and 404 recovery passed. No browser errors.");
+  await writeFile("artifacts/browser-checks.txt", results.join("\n") + "\n");
   console.log(results.join("\n"));
-  console.log("404 handling passed. No browser errors. Screenshots saved in artifacts/.");
-} finally {
-  await browser.close();
-}
+} finally { await browser.close(); }
