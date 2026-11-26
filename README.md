@@ -37,6 +37,12 @@ The enquiry focus supports Verdaqua grower trials, ReGreen research partnerships
 - Home uses the supplied germinating-seed background and a supplied process illustration beside the technology explanation. Verdaqua uses the supplied microgreens lead image. The PNGs are unchanged apart from descriptive filenames; Next.js handles responsive delivery. The process illustration is not presented as actual LS equipment or trial evidence. Asset provenance and previous artwork are documented in `ASSETS.md`.
 - No trial data was supplied, so Research describes work in progress. Supply verified results and trial conditions before adding any outcome claims; they are not required to preview this version.
 
+## Sitemap and crawler discovery
+
+The canonical public origin defaults to `https://luminarisynergy.com`. If the domain changes, update `src/lib/site-url.ts` or set `SITE_URL` in `.env.local` and your hosting provider's build environment, then rebuild. Use the preferred `www` or non-`www` origin consistently.
+
+Next.js serves `/sitemap.xml` with the five public page URLs and `/robots.txt` with the sitemap location. Contact enquiry query strings, section anchors and image assets are excluded. Sitemap URLs are generated from `src/app/sitemap.ts`; the origin is shared through `src/lib/site-url.ts`. No modification dates are emitted because the repository does not track verified content-update dates.
+
 ## Checks
 
 ```sh
