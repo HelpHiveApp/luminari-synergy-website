@@ -14,7 +14,7 @@ export default function Verdaqua() {
         id="verdaqua-title"
         eyebrow="Verdaqua · Commercially available"
         title={<>Better starts<br /> for growers.</>}
-        description="Verdaqua is Luminari Synergy’s agricultural brand. We work with growers to study how soaking seeds before sowing affects germination and early growth."
+        description="Verdaqua is Luminari Synergy’s unique seed health brand. We work with growers to study how soaking seeds before sowing affects germination and early growth. We provide optimal nutritional solutions to improve seed health and early growth."
         action={{ label: "Discuss Verdaqua for your crop", href: "/contact" }}
         image={{
           src: "/images/radish-microgreens-violet-droplet.png",
@@ -29,9 +29,8 @@ export default function Verdaqua() {
         <div>
           <h2 id="seed-soaking-title">Seed soaking with Verdaqua</h2>
           <div className="product-prose">
-            <p>In trials with mustard, beetroot and radish, we’re exploring how plasma-activated water fits into a grower’s existing routine.</p>
-            <p>Plasma-activated water is water treated using plasma, an energised gas. Verdaqua uses it at the seed preparation stage: seeds are soaked for an agreed period, then drained and sown into the grower’s usual growing medium.</p>
-            <p>The crop, seed lot, growing setup and soaking conditions all matter when planning a trial.</p>
+            <p>In trials with mustard, beetroot and radish, we explored how plasma-activated water fits into a grower’s existing routine.</p>
+            <p>Verdaqua is water treated using plasma, an energised gas, mixed with crop specific chemistry to improve seed health & early-stage growth. Verdaqua is used in the seed preparation stage: seeds are soaked for an agreed period, then drained and sown into the grower’s usual growing medium.</p>
             <Link className="text-link" href="/research#crop-trials">Explore the crop trials</Link>
           </div>
         </div>

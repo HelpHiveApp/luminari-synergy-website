@@ -3,8 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: { absolute: "Luminari Synergy | Plasma technology, from lab to field" },
-  description: "We develop plasma technologies for agriculture and environmental rehabilitation. Verdaqua plasma-activated water is commercially available; ReGreen is in development.",
+  title: { absolute: "Luminari Synergy | Home" },
+  description: "Homepage",
 };
 
 export default function Home() {
@@ -20,8 +20,8 @@ export default function Home() {
           preload
         />
         <div className="container plasma-copy">
-          <h1 id="home-title">Plasma technology,<br /> from lab to field.</h1>
-          <p>We develop plasma technologies for agriculture and environmental rehabilitation.</p>
+          <h1 id="home-title">For this harvest,<br /> and the next.</h1>
+          <p>At Luminari Synergy, we develop technology for sustainable agriculture and environmental rehabilitation.</p>
           <Link className="button hero-button" href="#technology">How our technology works</Link>
         </div>
         <div className="container hero-brand-links" id="brands">
@@ -39,9 +39,9 @@ export default function Home() {
         <div className="container feature-grid">
           <div className="feature-copy">
             <p className="section-label">Verdaqua · Commercially available</p>
-            <h2 id="verdaqua-heading">Plasma-activated water for seed soaking.</h2>
-            <p>Our agricultural brand focuses on the start of a crop. Verdaqua offers plasma-activated water for soaking seeds before sowing.</p>
-            <p>Soak the seeds at the preparation stage, then drain and sow them into your usual growing medium. The crop and growing setup guide the conversation.</p>
+            <h2 id="verdaqua-heading">A healthy start for seeds with Verdaqua.</h2>
+            <p>Our agricultural brand focuses on the start of a crop. Verdaqua is our proprietary seed-soaking formulation, made with plasma-activated water. Growers use it before sowing to support seed health and early growth.</p>
+            {/* <p>Soak the seeds at the preparation stage, then drain and sow them into your usual growing medium. The crop and growing setup guide the conversation.</p> */}
             <div className="section-actions">
               <Link className="button" href="/verdaqua">Explore Verdaqua</Link>
               <Link className="text-link" href="/contact?interest=verdaqua">Discuss a grower trial</Link>
@@ -63,9 +63,9 @@ export default function Home() {
         <div className="container">
           <p className="section-label">Our technology</p>
           <div className="technology-intro">
-            <h2 id="technology-title">From plasma to seed preparation.</h2>
+            <h2 id="technology-title">Verdaqua. From plasma to seed preparation.</h2>
             <div className="technology-overview">
-              <p>A water treatment process, followed by a practical step before sowing.</p>
+              {/* <p>A water treatment process, followed by a practical step before sowing.</p> */}
               <figure className="technology-photo">
                 <Image
                   src="/images/plasma-water-radish-germination-illustration.png"
@@ -82,18 +82,18 @@ export default function Home() {
           <ol className="process-list">
             <li>
               <span className="process-step" aria-hidden="true">01</span>
-              <h3>Plasma treatment</h3>
-              <p>Plasma is an energised gas. We use it to treat water.</p>
+              <h3>Treatment</h3>
+              <p>Plasma is an energised gas, which we use to treat water. The treatment changes the water’s chemistry, producing plasma-activated water.</p>
             </li>
             <li>
               <span className="process-step" aria-hidden="true">02</span>
-              <h3>Water activation</h3>
-              <p>The treatment changes the water’s chemistry, producing plasma-activated water.</p>
+              <h3>Enhancement</h3>
+              <p>We add our crop specific chemistry to ensure optimal plant health and early stage growth.</p>
             </li>
             <li>
               <span className="process-step" aria-hidden="true">03</span>
-              <h3>Seed soaking</h3>
-              <p>Seeds are soaked before sowing, then drained and sown into the grower’s usual growing medium.</p>
+              <h3>Verdaqua for Seed soaking</h3>
+              <p>Seeds are soaked before sowing, drained and then sown into the grower’s usual growing medium.</p>
             </li>
           </ol>
           <Link className="text-link" href="/research">Explore our crop research</Link>

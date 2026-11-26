@@ -11,11 +11,10 @@ export default function About() {
   return (
     <article className="editorial-page">
       <PageIntro label="Company" title="Plasma technology. Practical applications.">
-        <p>Luminari Synergy is a plasma technology company based in India. We develop plasma technologies for agriculture and environmental rehabilitation.</p>
+        <p>Luminari Synergy is a high-tech agriculture company that uses plasma technology. We develop solutions for more sustainable agriculture and environmental rehabilitation.</p>
       </PageIntro>
       <EditorialSection title="Verdaqua, our agricultural focus">
-        <p>Verdaqua is our agricultural brand, with commercially available plasma-activated water for seed soaking before sowing. We work with growers to understand how it fits into the routines they already use.</p>
-        <p>Our trials with mustard, beetroot and radish explore germination and early growth. We want the work to be useful in the context of a grower’s own crop and setup.</p>
+        <p>Verdaqua is our seed health brand, with commercially available formulas for seed soaking before sowing. We work with growers to understand how it fits into the routines they already use.</p>
         <p><Link className="text-link" href="/verdaqua">Get to know Verdaqua</Link></p>
       </EditorialSection>
       <EditorialSection title="ReGreen, in development">
