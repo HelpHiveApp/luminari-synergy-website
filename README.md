@@ -19,7 +19,7 @@ Stop the running server with Ctrl+C before reinstalling dependencies. On Windows
 - Homepage copy and composition: `src/app/page.tsx`.
 - Home introduces the parent plasma technology company through a continuous illustrated scene, then Verdaqua, the technology process and ReGreen. All headline, navigation, actions and brand links are HTML. The supplied mockup is not embedded in the site.
 - Shared typography is self-hosted DM Sans, including its light display weight. Purple/navy/green/ivory theme tokens, layout, states and reduced-motion rules live in `src/app/globals.css`.
-- Product hero: `src/components/hero.tsx`. Navigation: `src/components/site-header.tsx`. Footer: `src/components/site-footer.tsx`. Supplied logo and its CSS-masked ivory silhouette: `src/components/brand.tsx`. Root metadata: `src/app/layout.tsx`.
+- Product hero: `src/components/hero.tsx`. Navigation: `src/components/site-header.tsx`. Footer: `src/components/site-footer.tsx`. Shared full-colour logo: `src/components/brand.tsx`. Root metadata: `src/app/layout.tsx`.
 - Other page copy: `src/app/{verdaqua,research,about,contact}/page.tsx`.
 - Photograph attribution and license: `ASSETS.md`.
 

@@ -42,7 +42,7 @@ export function SiteHeader() {
   return (
     <header ref={headerRef} className={`site-header${isHome ? " site-header--overlay" : ""}`}>
       <div className="container header-inner">
-        <Brand reversed={isHome} />
+        <Brand />
         <button
           ref={menuRef}
           className="menu-toggle"

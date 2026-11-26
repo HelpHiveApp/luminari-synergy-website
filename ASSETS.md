@@ -3,7 +3,7 @@
 ## Supplied logo
 
 - `public/brand/luminari-mark.webp` is a losslessly compressed version of the supplied “Three plants, one purple centerpiece.png”. Its colours, proportions and transparency are preserved; decoded visible pixels were verified unchanged.
-- Header and footer use the same silhouette. On dark surfaces, a CSS alpha mask colours it exactly warm ivory. The original full-colour version is used on light surfaces.
+- Header and footer use the full-colour artwork on every surface, including the dark homepage hero and footer. No recolouring mask or filter is applied.
 - `src/app/icon.png` is a 64×64 browser icon derived from the same supplied artwork, fitted with transparent padding to preserve its proportions. It replaces the duplicated full-size logo.
 
 ## Supplied homepage seed background

@@ -49,8 +49,10 @@ try {
 
       const logo = await page.locator(".site-header .logo-mark").boundingBox();
       assert.ok(Math.abs(logo.width / logo.height - 1681 / 936) < 0.02, "Supplied logo proportions are preserved");
-      assert.equal(await page.locator(".site-header .logo-mark--reversed").count(), route === "/" ? 1 : 0);
-      assert.equal(await page.locator(".site-footer .logo-mark--reversed").count(), 1);
+      for (const mark of await page.locator(".logo-mark").all()) {
+        assert.equal(await mark.evaluate(el => getComputedStyle(el).maskImage), "none");
+        assert.ok((await mark.locator("img").getAttribute("src")).includes("luminari-mark.webp"));
+      }
 
       if (mobileMenu) {
         const toggle = page.getByRole("button", { name: "Menu", exact: true });

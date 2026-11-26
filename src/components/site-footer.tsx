@@ -6,7 +6,7 @@ export function SiteFooter() {
     <footer className="site-footer">
       <div className="container footer-main">
         <div className="footer-brand">
-          <Brand reversed />
+          <Brand />
           <p>Plasma technology for agriculture<br />and environmental rehabilitation.</p>
         </div>
         <nav aria-label="Brands">
