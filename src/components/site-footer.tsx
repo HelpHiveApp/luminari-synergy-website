@@ -8,6 +8,12 @@ export function SiteFooter() {
         <div className="footer-brand">
           <Brand />
           <p>Plasma technology for agriculture<br />and environmental rehabilitation.</p>
+          <address className="footer-address">
+            <span className="footer-company">Luminari Synergy Pvt. Ltd.</span><br />
+            79B, Paduthodu, Puramattom Village,<br />
+            Pathanamthitta – 689544,<br />
+            Kerala, India
+          </address>
         </div>
         <nav aria-label="Brands">
           <p>Our brands</p>
